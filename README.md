@@ -48,7 +48,7 @@ Technologies used to develop this project:
 - Run the development server with `npm run dev` or `yarn dev`
 
 ## 🖥 Preview
-
+https://user-images.githubusercontent.com/49074930/157991283-7abbd013-c269-4768-80b8-ed4add807264.mp4
 
 ## 🤔 How to contribute
 

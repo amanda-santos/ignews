@@ -39,6 +39,7 @@ Technologies used to develop this project:
 - Next Auth
 - TypeScript
 - Sass
+- Prismic
 - Stripe
 - FaunaDB
 

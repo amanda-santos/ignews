@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import Prismic from "@prismicio/client";
 import { RichText } from "prismic-dom";
 
@@ -15,6 +17,15 @@ type PostsProps = {
 };
 
 export default function Posts({ posts }: PostsProps) {
+  const { data: session } = useSession();
+  const [shouldShowFullPost, setShouldShowFullPost] = useState(false);
+
+  useEffect(() => {
+    if (session?.activeSubscription) {
+      setShouldShowFullPost(true);
+    }
+  }, [session]);
+
   return (
     <>
       <Head>
@@ -24,7 +35,14 @@ export default function Posts({ posts }: PostsProps) {
       <main className={styles.container}>
         <div className={styles.posts}>
           {posts.map((post) => (
-            <Link href={`/posts/${post.slug}`} key={post.slug}>
+            <Link
+              href={
+                shouldShowFullPost
+                  ? `/posts/${post.slug}`
+                  : `/posts/preview/${post.slug}`
+              }
+              key={post.slug}
+            >
               <a>
                 <time>{post.updatedAt}</time>
                 <strong>{post.title}</strong>
@@ -48,8 +66,6 @@ export const getStaticProps: GetStaticProps = async () => {
       pageSize: 100,
     }
   );
-
-  console.log(JSON.stringify(response.results));
 
   const posts = response.results.map((post) => {
     return {

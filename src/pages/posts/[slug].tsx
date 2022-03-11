@@ -1,3 +1,4 @@
+import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { RichText } from "prismic-dom";
@@ -33,12 +34,20 @@ export default function Post({ post }: PostProps) {
 
 // this is a restricted page
 // getServerSideProps is safe unlike getStaticProps
-export const getServerSideProps = async ({ req, params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  params,
+}) => {
   const session = await getSession({ req });
   const { slug } = params;
 
-  if (!session) {
-    console.log("Not logged");
+  if (!session?.activeSubscription) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
   }
 
   const prismic = getPrismicClient(req);

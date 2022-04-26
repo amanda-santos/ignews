@@ -3,10 +3,9 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import Prismic from "@prismicio/client";
 import { RichText } from "prismic-dom";
 
-import { getPrismicClient } from "../../services/prismic";
+import { client } from "../../services/prismic";
 import { Post as PostType } from "../../types";
 import styles from "./styles.module.scss";
 
@@ -57,17 +56,9 @@ export default function Posts({ posts }: PostsProps) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const prismic = getPrismicClient();
+  const results = await client.getAllByType("post");
 
-  const response = await prismic.query<any>(
-    [Prismic.predicates.at("document.type", "post")],
-    {
-      fetch: ["publication.title", "publication.content"],
-      pageSize: 100,
-    }
-  );
-
-  const posts = response.results.map((post) => {
+  const posts = results.map((post) => {
     return {
       slug: post.uid,
       title: RichText.asText(post.data.title),
